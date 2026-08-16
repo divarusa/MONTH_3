@@ -3,6 +3,7 @@ from aiogram import Router, F
 from aiogram.types import Message, FSInputFile, CallbackQuery
 from config import bot
 from handlers.buttons import main_buttons, main_builder, menu_inline
+from db import main_db
 
 router_commands = Router()
 
@@ -28,8 +29,16 @@ async def mem_command(message: Message):
     await bot.send_photo(chat_id=message.chat.id, photo=photo)
 
 
-@router_commands.callback_query(F.data == 'mem')
-async def mem_command(call: CallbackQuery):
-    photo = FSInputFile('media/mem.png')
-    await bot.send_photo(chat_id=call.message.chat.id, photo=photo)
-    await call.answer()
+@router_commands.message(Command('users'))
+async def show_users_command(message: Message):
+    users = main_db.get_all_users()
+
+    if not users:
+        await message.answer("База данных пока пуста.")
+        return
+
+    text = "Записи из базы данных:\n\n"
+    for user in users:
+        text += f"Имя: {user[0]}, Возраст: {user[1]}, Тел: {user[2]}\n"
+
+    await message.answer(text)

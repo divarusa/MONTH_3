@@ -2,8 +2,10 @@ import logging
 from config import bot, dp, Admin
 import asyncio
 from handlers import commands, echo, fsm
+from db.main_db import init_db
 
 async def on_startup():
+    init_db()
     for admin_id in Admin:
         await bot.send_message(chat_id=admin_id, text='Бот включен!')
 
