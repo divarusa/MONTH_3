@@ -1,21 +1,22 @@
 from aiogram.filters import Command
 from aiogram import Router, F
-from aiogram.types import Message, FSInputFile, CallbackQuery
+from aiogram.types import Message, FSInputFile
 from config import bot
-from handlers.buttons import main_buttons, main_builder, menu_inline
+from handlers.buttons import menu_inline
 from db import main_db
 
 router_commands = Router()
 
+
 @router_commands.message(Command('start'))
 async def start_command(message: Message):
     await message.answer('Привет. Напиши своё имя', reply_markup=menu_inline)
-    await message.answer(f'Привет. Твой ID — {message.from_user.id}')
+    await message.answer(f'Привет. Твой ID - {message.from_user.id}')
 
 
 @router_commands.message(Command('help'))
 async def help_command(message: Message):
-    await message.answer('/start - старт бота \n/help - помощник ')
+    await message.answer('/start - старт бота \n/help - помощник \n/form - заполнить анкету \n/users - список записей')
 
 
 @router_commands.message(F.text == 'привет')
@@ -32,13 +33,11 @@ async def mem_command(message: Message):
 @router_commands.message(Command('users'))
 async def show_users_command(message: Message):
     users = main_db.get_all_users()
-
     if not users:
         await message.answer("База данных пока пуста.")
         return
 
     text = "Записи из базы данных:\n\n"
     for user in users:
-        text += f"Имя: {user[0]}, Возраст: {user[1]}, Тел: {user[2]}\n"
-
+        text += f"ID: {user[0]} | Имя: {user[1]}, Возраст: {user[2]}, Тел: {user[3]}\n"
     await message.answer(text)

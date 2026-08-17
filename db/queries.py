@@ -1,9 +1,9 @@
 CREATE_TABLE_USERS = """
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    age INTEGER,
-    phone TEXT
+    name TEXT NOT NULL,
+    age INTEGER NOT NULL,
+    phone TEXT NOT NULL
 );
 """
 
@@ -13,5 +13,5 @@ VALUES (?, ?, ?);
 """
 
 SELECT_ALL_USERS = """
-SELECT name, age, phone FROM users;
+SELECT id, name, age, phone FROM users;
 """

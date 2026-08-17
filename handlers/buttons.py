@@ -10,7 +10,6 @@ main_buttons = ReplyKeyboardMarkup(
     resize_keyboard=True
 )
 
-# ------------------------------------------------------------------------------------------
 
 main_buttons_builder = ReplyKeyboardBuilder()
 main_buttons_builder.button(text='/start')
@@ -19,9 +18,7 @@ main_buttons_builder.adjust(2)
 
 main_builder = main_buttons_builder.as_markup(resize_keyboard=True)
 
-# ------------------------------------------------------------------------------------------
 
-# INLINE-BUTTONS
 
 menu_inline = InlineKeyboardMarkup(
     inline_keyboard=[
