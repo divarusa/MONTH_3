@@ -32,12 +32,17 @@ async def mem_command(message: Message):
 
 @router_commands.message(Command('users'))
 async def show_users_command(message: Message):
-    users = main_db.get_all_users()
+    users = main_db.get_all_users_with_info()
     if not users:
         await message.answer("База данных пока пуста.")
         return
 
-    text = "Записи из базы данных:\n\n"
     for user in users:
-        text += f"ID: {user[0]} | Имя: {user[1]}, Возраст: {user[2]}, Тел: {user[3]}\n"
-    await message.answer(text)
+        text = (
+            f"ID: {user['id']}\n"
+            f"Имя: {user['name']}\n"
+            f"Возраст: {user['age']}\n"
+            f"Телефон: {user['phone']}\n"
+            f"Город: {user['city']}"
+        )
+        await message.answer(text)

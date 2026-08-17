@@ -11,6 +11,7 @@ class Registration(StatesGroup):
     name = State()
     age = State()
     phone = State()
+    city = State()
 
 
 @router_fsm.message(Command('cancel'))
@@ -58,18 +59,30 @@ async def process_phone(message: types.Message, state: FSMContext):
     if not phone:
         await message.answer('Номер телефона не может быть пустым. Введите номер еще раз:')
         return
+    await state.update_data(phone=phone)
+    await state.set_state(Registration.city)
+    await message.answer('Из какого вы города?')
+
+
+@router_fsm.message(Registration.city)
+async def process_city(message: types.Message, state: FSMContext):
+    city = (message.text or "").strip()
+    if not city:
+        await message.answer('Город не может быть пустым. Введите город еще раз:')
+        return
 
     data = await state.get_data()
-    data.update({'phone': phone})
+    data.update({'city': city})
 
     try:
-        main_db.save_user({
+        user_id = main_db.save_user({
             'name': data['name'],
             'age': int(data['age']),
             'phone': data['phone']
         })
+        main_db.save_user_info(user_id, {'city': data['city']})
     except Exception:
-        await message.answer('Ошибка при сохранении, попробуйте позже.')
+        await message.answer('Ошибка при сохранении. Попробуйте позже.')
         await state.clear()
         return
 
@@ -78,5 +91,6 @@ async def process_phone(message: types.Message, state: FSMContext):
         f"Заявка принята!\n\n"
         f"Имя: {data['name']}\n"
         f"Возраст: {data['age']}\n"
-        f"Телефон: {data['phone']}"
+        f"Телефон: {data['phone']}\n"
+        f"Город: {data['city']}"
     )
