@@ -3,7 +3,8 @@ CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     age INTEGER NOT NULL,
-    phone TEXT NOT NULL
+    phone TEXT NOT NULL,
+    photo_id TEXT
 );
 """
 
@@ -17,8 +18,8 @@ CREATE TABLE IF NOT EXISTS user_info (
 """
 
 INSERT_USER = """
-INSERT INTO users (name, age, phone)
-VALUES (?, ?, ?);
+INSERT INTO users (name, age, phone, photo_id)
+VALUES (?, ?, ?, ?);
 """
 
 INSERT_USER_INFO = """
@@ -27,12 +28,11 @@ VALUES (?, ?);
 """
 
 SELECT_ALL_USERS = """
-SELECT id, name, age, phone FROM users;
+SELECT id, name, age, phone, photo_id FROM users;
 """
 
 SELECT_ALL_USERS_JOIN = """
-SELECT users.id, users.name, users.age, users.phone, user_info.city
+SELECT users.id, users.name, users.age, users.phone, users.photo_id, user_info.city
 FROM users
 INNER JOIN user_info ON users.id = user_info.user_id;
 """
-

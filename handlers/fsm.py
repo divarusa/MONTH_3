@@ -1,4 +1,4 @@
-from aiogram import Router, types
+from aiogram import Router, types, F
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.filters import Command
@@ -11,6 +11,7 @@ class Registration(StatesGroup):
     name = State()
     age = State()
     phone = State()
+    photo = State()
     city = State()
 
 
@@ -60,8 +61,21 @@ async def process_phone(message: types.Message, state: FSMContext):
         await message.answer('Номер телефона не может быть пустым. Введите номер еще раз:')
         return
     await state.update_data(phone=phone)
+    await state.set_state(Registration.photo)
+    await message.answer('Отправьте ваше фото:')
+
+
+@router_fsm.message(Registration.photo, F.photo)
+async def process_photo(message: types.Message, state: FSMContext):
+    photo_id = message.photo[-1].file_id
+    await state.update_data(photo_id=photo_id)
     await state.set_state(Registration.city)
     await message.answer('Из какого вы города?')
+
+
+@router_fsm.message(Registration.photo)
+async def process_photo_invalid(message: types.Message):
+    await message.answer('Отправьте именно фото.')
 
 
 @router_fsm.message(Registration.city)
@@ -75,22 +89,26 @@ async def process_city(message: types.Message, state: FSMContext):
     data.update({'city': city})
 
     try:
-        user_id = main_db.save_user({
+        user_id = await main_db.save_user({
             'name': data['name'],
             'age': int(data['age']),
-            'phone': data['phone']
+            'phone': data['phone'],
+            'photo_id': data['photo_id']
         })
-        main_db.save_user_info(user_id, {'city': data['city']})
+        await main_db.save_user_info(user_id, {'city': data['city']})
     except Exception:
-        await message.answer('Ошибка при сохранении. Попробуйте позже.')
+        await message.answer('Ошибка при сохранении.')
         await state.clear()
         return
 
     await state.clear()
-    await message.answer(
-        f"Заявка принята!\n\n"
-        f"Имя: {data['name']}\n"
-        f"Возраст: {data['age']}\n"
-        f"Телефон: {data['phone']}\n"
-        f"Город: {data['city']}"
+    await message.answer_photo(
+        photo=data['photo_id'],
+        caption=(
+            f"Заявка принята!\n\n"
+            f"Имя: {data['name']}\n"
+            f"Возраст: {data['age']}\n"
+            f"Телефон: {data['phone']}\n"
+            f"Город: {data['city']}"
+        )
     )

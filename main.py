@@ -6,7 +6,7 @@ from db.main_db import create_table
 
 
 async def on_startup():
-    create_table()
+    await create_table()
     admins = Admin if isinstance(Admin, (list, tuple)) else [Admin]
     for admin_id in admins:
         await bot.send_message(chat_id=admin_id, text='Бот включен!')
