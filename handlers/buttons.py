@@ -26,3 +26,17 @@ menu_inline = InlineKeyboardMarkup(
         [InlineKeyboardButton(text='Помощь', callback_data='help')]
     ]
 )
+
+confirm_delete = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [InlineKeyboardButton(text='Да, удалить', callback_data='confirm_delete'),
+         InlineKeyboardButton(text='Отмена', callback_data='cancel_delete')]
+    ]
+)
+
+def user_actions(user_id):
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text='Удалить', callback_data=f'delete:{user_id}')]
+        ]
+    )

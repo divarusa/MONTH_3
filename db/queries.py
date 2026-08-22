@@ -36,3 +36,6 @@ SELECT users.id, users.name, users.age, users.phone, users.photo_id, user_info.c
 FROM users
 INNER JOIN user_info ON users.id = user_info.user_id;
 """
+
+DELETE_USER = "DELETE FROM users WHERE id = ?"
+DELETE_USER_INFO = "DELETE FROM user_info WHERE user_id = ?"

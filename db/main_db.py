@@ -48,6 +48,12 @@ async def get_all_users_with_info():
         rows = await cursor.fetchall()
     return rows
 
+async def delete_user_db(user_id):
+    async with aiosqlite.connect(PATH_DB) as conn:
+        await conn.execute(queries.DELETE_USER, (user_id,))
+        await conn.execute(queries.DELETE_USER_INFO, (user_id,))
+        await conn.commit()
+
 
 # старый код на sqlite3 
 #

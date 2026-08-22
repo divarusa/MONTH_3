@@ -3,7 +3,7 @@ import asyncio
 from config import bot, dp, Admin
 from handlers import commands, echo, fsm
 from db.main_db import create_table
-
+from handlers import commands, echo, fsm, fsm_delete
 
 async def on_startup():
     await create_table()
@@ -14,6 +14,7 @@ async def on_startup():
 
 dp.include_router(commands.router_commands)
 dp.include_router(fsm.router_fsm)
+dp.include_router(fsm_delete.router_delete)
 
 # Эхо
 dp.include_router(echo.router_echo)

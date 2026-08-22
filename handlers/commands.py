@@ -4,6 +4,7 @@ from aiogram.types import Message, FSInputFile
 from config import bot
 from handlers.buttons import menu_inline
 from db import main_db
+from handlers import buttons
 
 router_commands = Router()
 
@@ -46,6 +47,10 @@ async def show_users_command(message: Message):
             f"Город: {user['city']}"
         )
         if user['photo_id']:
-            await message.answer_photo(photo=user['photo_id'], caption=caption)
+            await message.answer_photo(
+                photo=user['photo_id'], 
+                caption=caption,
+                reply_markup=buttons.user_actions(user['id'])
+            )
         else:
             await message.answer(caption)
